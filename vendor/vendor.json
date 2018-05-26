@@ -213,7 +213,7 @@
 			"revisionTime": "2017-07-19T03:24:12Z"
 		},
 		{
-			"checksumSHA1": "tY+5thYxjKDUQyQXYcBqogmMS5U=",
+			"checksumSHA1": "uggjqMBFNJd11oNco2kbkAT641w=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "314a259e304ff91bd6985da2a7149bbf91237993",
 			"revisionTime": "2017-07-19T03:44:26Z"
@@ -237,5 +237,5 @@
 			"revisionTime": "2017-10-09T19:53:40Z"
 		}
 	],
-	"rootPath": "github.com/apilayer/freegeoip"
+	"rootPath": "github.com/msbarry/freegeoip"
 }

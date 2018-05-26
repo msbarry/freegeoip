@@ -93,20 +93,20 @@ func TestNeedUpdateSameFile(t *testing.T) {
 }
 
 func TestNeedUpdateSameMD5(t *testing.T) {
-  db := &DB{file: testFile}
-  _, checksum, err := db.newReader(db.file)
-  if err != nil {
-    t.Fatal(err)
-  }
-  db.checksum = checksum
+	db := &DB{file: testFile}
+	_, checksum, err := db.newReader(db.file)
+	if err != nil {
+		t.Fatal(err)
+	}
+	db.checksum = checksum
 	mux := http.NewServeMux()
-  changeHeaderThenServe := func(h http.Handler) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-      w.Header().Add("X-Database-MD5", checksum)
-      h.ServeHTTP(w, r)
-    }
-  }
-  mux.Handle("/testdata/", changeHeaderThenServe(http.FileServer(http.Dir("."))))
+	changeHeaderThenServe := func(h http.Handler) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("X-Database-MD5", checksum)
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("/testdata/", changeHeaderThenServe(http.FileServer(http.Dir("."))))
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
 	yes, err := db.needUpdate(srv.URL + "/" + testFile)
@@ -120,13 +120,13 @@ func TestNeedUpdateSameMD5(t *testing.T) {
 
 func TestNeedUpdateMD5(t *testing.T) {
 	mux := http.NewServeMux()
-  changeHeaderThenServe := func(h http.Handler) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-      w.Header().Add("X-Database-MD5", "9823y5981y2398y1234")
-      h.ServeHTTP(w, r)
-    }
-  }
-  mux.Handle("/testdata/", changeHeaderThenServe(http.FileServer(http.Dir("."))))
+	changeHeaderThenServe := func(h http.Handler) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Add("X-Database-MD5", "9823y5981y2398y1234")
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("/testdata/", changeHeaderThenServe(http.FileServer(http.Dir("."))))
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
 	db := &DB{file: testFile}
@@ -241,7 +241,7 @@ func TestWatchMkdir(t *testing.T) {
 		time.Sleep(time.Second)
 		os.RemoveAll(filepath.Dir(defaultDB))
 	}()
-	db, err := OpenURL(srv.URL+"/"+testFile, time.Hour, time.Minute)
+	db, err := OpenURL(srv.URL+"/"+testFile, defaultDB, time.Hour, time.Minute)
 	if err != nil {
 		t.Fatalf("Failed to create %s: %s", filepath.Dir(defaultDB), err)
 	}
@@ -266,7 +266,7 @@ func TestWatchMkdirFail(t *testing.T) {
 	mux.Handle("/testdata/", http.FileServer(http.Dir(".")))
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
-	db, err := OpenURL(srv.URL+"/"+testFile, time.Hour, time.Minute)
+	db, err := OpenURL(srv.URL+"/"+testFile, defaultDB, time.Hour, time.Minute)
 	if err == nil {
 		db.Close()
 		t.Fatalf("Unexpected creation of dir %s worked", basedir)
@@ -295,7 +295,7 @@ func TestLookupOnURL(t *testing.T) {
 	srv := httptest.NewServer(mux)
 	defer srv.Close()
 	os.Remove(defaultDB) // In case it exists.
-	db, err := OpenURL(srv.URL+"/"+testFile, time.Hour, time.Minute)
+	db, err := OpenURL(srv.URL+"/"+testFile, defaultDB, time.Hour, time.Minute)
 	if err != nil {
 		t.Fatal(err)
 	}

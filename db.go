@@ -128,9 +128,9 @@ func MaxMindUpdateURL(hostname, productID, userID, licenseKey string) (string, e
 // OpenURL creates and initializes a DB from a URL.
 // It automatically downloads and updates the file in background, and
 // keeps a local copy on $TMPDIR.
-func OpenURL(url string, updateInterval, maxRetryInterval time.Duration) (*DB, error) {
+func OpenURL(url, file string, updateInterval, maxRetryInterval time.Duration) (*DB, error) {
 	db := &DB{
-		file:             defaultDB,
+		file:             file,
 		notifyQuit:       make(chan struct{}),
 		notifyOpen:       make(chan string, 1),
 		notifyError:      make(chan error, 1),

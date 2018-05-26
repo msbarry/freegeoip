@@ -27,7 +27,7 @@ func ExampleOpen() {
 func ExampleOpenURL() {
 	updateInterval := 24 * time.Hour
 	maxRetryInterval := time.Hour
-	db, err := OpenURL(MaxMindDB, updateInterval, maxRetryInterval)
+	db, err := OpenURL(MaxMindDB, defaultDB, updateInterval, maxRetryInterval)
 	if err != nil {
 		log.Fatal(err)
 	}
