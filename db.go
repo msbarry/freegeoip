@@ -275,11 +275,13 @@ func (db *DB) runUpdate(url string) error {
 func (db *DB) needUpdate(url string) (bool, error) {
 	stat, err := os.Stat(db.file)
 	if err != nil {
+		db.sendInfo("no db found, must be downloaded")
 		return true, nil // Local db is missing, must be downloaded.
 	}
 
 	resp, err := http.Head(url)
 	if err != nil {
+		db.sendInfo("failed to HEAD " + url)
 		return false, err
 	}
 	defer resp.Body.Close()
@@ -287,12 +289,15 @@ func (db *DB) needUpdate(url string) (bool, error) {
 	// Check X-Database-MD5 if it exists
 	headerMd5 := resp.Header.Get("X-Database-MD5")
 	if len(headerMd5) > 0 && db.checksum != headerMd5 {
+		db.sendInfo("MD5 changed, must be downloaded")
 		return true, nil
 	}
 
 	if stat.Size() != resp.ContentLength {
+		db.sendInfo("Size changed, must be downloaded")
 		return true, nil
 	}
+	db.sendInfo("File hasn't changed, skipping refresh")
 	return false, nil
 }
 
