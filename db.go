@@ -177,6 +177,14 @@ func (db *DB) watchEvents(watcher *fsnotify.Watcher) {
 	}
 }
 
+func (db *DB) LastModifyTime() (modified time.Time, err error) {
+	var info os.FileInfo
+	if info, err = os.Stat(db.file); err == nil {
+		modified = info.ModTime()
+	}
+	return
+}
+
 func (db *DB) openFile() error {
 	reader, checksum, err := db.newReader(db.file)
 	if err != nil {
