@@ -317,6 +317,7 @@ func (db *DB) download(url string) (tmpfile string, err error) {
 	defer resp.Body.Close()
 	tmpfile = filepath.Join(os.TempDir(),
 		fmt.Sprintf("_freegeoip.%d.db.gz", time.Now().UnixNano()))
+	makeDir(tmpfile)
 	f, err := os.Create(tmpfile)
 	if err != nil {
 		return "", err
@@ -327,6 +328,14 @@ func (db *DB) download(url string) (tmpfile string, err error) {
 		return "", err
 	}
 	return tmpfile, nil
+}
+
+func makeDir(file string) {
+	dir := filepath.Dir(file)
+	_, err := os.Stat(dir)
+	if err != nil {
+		err = os.MkdirAll(dir, 0755)
+	}
 }
 
 func (db *DB) makeDir() (dbdir string, err error) {
